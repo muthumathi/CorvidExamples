@@ -1,0 +1,53 @@
+// For full API documentation, including code examples, visit https://wix.to/94BuAAs
+import {getCurrentCart} from 'backend/aModule';
+import wixData from 'wix-data';
+import wixWindow from 'wix-window';
+import wixLocation from 'wix-location';
+import wixUsers from 'wix-users';
+let cartDetails,Maximum,selectedDate,selectedSlot,user,checkBoxValue;
+let maxDates = [];
+
+
+ $w.onReady(async function () {
+  let results = await getCurrentCart();
+  console.log(results+" = results");
+  results = results.lineItems;
+  
+  let length = results.length;
+
+ for (var i = 0; i < length; i++) {
+    let pID = results[i].name;
+     wixData.query("deliveryDate")
+  .eq("name", pID)
+  .find()
+  .then( (resultss) => {
+    console.log("Length = "+resultss.items.length);
+    let item = resultss.items[0]; //see item below
+    console.log("query Result = "+item);
+
+
+    console.log("MakingTime is "+item.makingTime);
+    let makingTIME = item.makingTime;
+    maxDates.push(makingTIME);
+    Maximum = Math.max(...maxDates);    
+    console.log("Max For = "+Maximum); 
+    $w("#standard").show();
+    // $w("#text11").show();
+    $w("#standard").text = "​* Standard Delivery in "+Maximum+" Day(s)."
+
+  } )
+
+  .catch( (err) => {
+    let errorMsg = err;
+    console.log(errorMsg);
+  } );    
+ }
+
+
+ });
+
+
+
+
+
+
